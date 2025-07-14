@@ -1,57 +1,53 @@
 import { openai } from '@ai-sdk/openai';
-import { generateText, streamText } from 'ai';
+import { generateText } from 'ai';
+import { SYSTEM_PROMPT_CHAT, SYSTEM_PROMPT_GUARDRAILS } from '@/app/prompts/system';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  const { messages, previousResult } = await req.json()
   console.log(messages, 'messages')
   try {
-    const result = await streamText({
+    const systemMessages = [
+      { role: 'system', content: SYSTEM_PROMPT_GUARDRAILS },
+      { role: 'system', content: SYSTEM_PROMPT_CHAT },
+    ];
+    if (previousResult) {
+      systemMessages.push({
+        role: 'system',
+        content: `Este es el HTML generado anteriormente para la boda. Si el usuario pide cambios, modifícalo en base a este código:
+\n\n${previousResult}`
+      });
+    }
+    const result = await generateText({
       model: openai('gpt-4o'),
-      messages: messages,
-      system: `Quiero que actúes como un diseñador y desarrollador web profesional especializado en sitios para bodas.
-
-Necesito que generes una plantilla completa en HTML5 con estilo moderno, adaptable a dispositivos móviles (responsive), elegante y visualmente atractivo, utilizando CSS simple (o Tailwind CSS si es posible).
-
-El sitio debe incluir las siguientes secciones:
-
-Portada de bienvenida con una imagen destacada, nombres de los novios y fecha.
-
-Nuestra historia (línea de tiempo o texto con fotos).
-
-Itinerario del evento (con horario y lugares).
-
-Ubicaciones (con mapa o referencias).
-
-Formulario de confirmación de asistencia (RSVP).
-
-Recomendaciones de hospedaje.
-
-Mesa de regalos (con enlaces).
-
-Galería de fotos.
-
-Libro de visitas para mensajes.
-
-Footer con redes sociales, contacto, y derechos reservados.
-
-Incluye navegación fija (barra superior), una paleta de colores romántica pero moderna, tipografía clara y espacio para incluir imágenes en cada sección.
-
-Opcionalmente, puedes incluir una cuenta regresiva al evento.
-
-Dame todo el código en un solo archivo para poder probarlo fácilmente.
-
-El sitio debe ser responsive y debe funcionar en todos los dispositivos.
-
-El sitio debe ser accesible y debe tener un buen SEO.
-
-El sitio debe ser fácil de mantener y actualizar.
-`,
-
+      messages: [
+        ...systemMessages,
+        ...messages,
+      ],
+      maxSteps: 3,
     });
-    return result.toDataStreamResponse();
+
+    // Parsear la respuesta para extraer bloque de código y mensaje breve
+    const content = result.text;
+    console.log('Respuesta cruda del modelo:', content);
+    // Regex más flexible para aceptar ``` o ```html
+    const codeRegex = /```(?:html)?\n([\s\S]*?)```/m;
+    const match = content.match(codeRegex);
+    let codeBlock = null;
+    let shortMsg = null;
+    if (match) {
+      codeBlock = match[1].trim();
+      shortMsg = content.replace(codeRegex, '').trim();
+    } else {
+      shortMsg = content.trim();
+    }
+
+    return new Response(JSON.stringify({ codeBlock, shortMsg }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
 
   } catch (error) {
     console.error(error);
