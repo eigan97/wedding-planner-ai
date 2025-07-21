@@ -43,12 +43,7 @@ export default function Home() {
                         : { position: "absolute", zIndex: 10 }
                 }
             >
-                <ChatCard
-                    minimized={minimized}
-                    setMinimized={setMinimized}
-                    pinned={pinned}
-                    setPinned={setPinned}
-                />
+                <ChatCard />
             </motion.div>
         </div>
     );
