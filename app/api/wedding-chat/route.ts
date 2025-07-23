@@ -29,7 +29,7 @@ export async function POST(req: Request) {
                 ...systemMessages,
                 ...messages,
             ],
-            maxSteps: 5, // Permitir más pasos para usar múltiples agentes
+            maxSteps: 10, // Permitir más pasos para usar múltiples agentes
         });
 
         // Procesar la respuesta para extraer llamadas a herramientas
@@ -38,25 +38,6 @@ export async function POST(req: Request) {
 
         // Buscar llamadas a herramientas en el texto
         const toolCalls = extractToolCalls(content);
-
-        // Validación: asegurarse de que todos los agentes esperados estén presentes
-        const agentesEsperados = [
-            'portada',
-            'nuestra_historia',
-            'itinerario',
-            'ubicaciones',
-            'rsvp',
-            'hospedaje',
-            'mesa_regalos',
-            'galeria',
-            'cuenta_regresiva',
-            'footer'
-        ];
-        const agentesLlamados = toolCalls.map(tc => tc.name);
-        const faltantes = agentesEsperados.filter(a => !agentesLlamados.includes(a));
-        for (const agente of faltantes) {
-            toolCalls.push({ name: agente, args: {} }); // ejecuta con defaults
-        }
 
         if (toolCalls.length > 0) {
             // Ejecutar todas las herramientas
@@ -173,7 +154,25 @@ function combineToolResults(toolResults: Array<{ name: string, result: string }>
     // Agregar cada sección generada por las herramientas
     toolResults.forEach(({ name, result }) => {
         if (!result.startsWith('Error')) {
-            htmlParts.push(result);
+            // Limpiar backticks del resultado
+            let cleanResult = result;
+
+            // Remover ```html al inicio
+            cleanResult = cleanResult.replace(/^```html\s*/i, '');
+
+            // Remover ``` al final
+            cleanResult = cleanResult.replace(/\s*```$/i, '');
+
+            // Remover ``` al inicio (sin html)
+            cleanResult = cleanResult.replace(/^```\s*/i, '');
+
+            // Remover ``` al final
+            cleanResult = cleanResult.replace(/\s*```$/i, '');
+
+            // Limpiar espacios extra al inicio y final
+            cleanResult = cleanResult.trim();
+
+            htmlParts.push(cleanResult);
         }
     });
 

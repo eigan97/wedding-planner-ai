@@ -1,26 +1,55 @@
-// Exportar todas las herramientas
-export { getWeatherTool } from './get-weather';
-export { calculateTool } from './calculate';
-export { getCurrentTimeTool } from './get-current-time';
+// Importar herramientas de utilidad
+import { getWeatherTool } from './get-weather';
+import { calculateTool } from './calculate';
+import { getCurrentTimeTool } from './get-current-time';
 
-// Exportar herramientas de boda
-export { portadaTool } from './portada';
-export { nuestraHistoriaTool } from './nuestra-historia';
-export { itinerarioTool } from './itinerario';
-export { ubicacionesTool } from './ubicaciones';
-export { rsvpTool } from './rsvp';
-export { hospedajeTool } from './hospedaje';
-export { mesaRegalosTool } from './mesa-regalos';
-export { galeriaTool } from './galeria';
-export { cuentaRegresivaTool } from './cuenta-regresiva';
-export { footerTool } from './footer';
+// Importar herramientas de boda
+import { portadaTool } from './portada';
+import { nuestraHistoriaTool } from './nuestra-historia';
+import { itinerarioTool } from './itinerario';
+import { ubicacionesTool } from './ubicaciones';
+import { rsvpTool } from './rsvp';
+import { hospedajeTool } from './hospedaje';
+import { mesaRegalosTool } from './mesa-regalos';
+import { galeriaTool } from './galeria';
+import { cuentaRegresivaTool } from './cuenta-regresiva';
+import { footerTool } from './footer';
 
-// Exportar todas las funciones de ejecución
+// Exportar todas las herramientas de boda
+export const tools = [
+    portadaTool,
+    nuestraHistoriaTool,
+    itinerarioTool,
+    ubicacionesTool,
+    rsvpTool,
+    hospedajeTool,
+    mesaRegalosTool,
+    galeriaTool,
+    cuentaRegresivaTool,
+    footerTool
+];
+
+// Exportar herramientas individuales
+export {
+    getWeatherTool,
+    calculateTool,
+    getCurrentTimeTool,
+    portadaTool,
+    nuestraHistoriaTool,
+    itinerarioTool,
+    ubicacionesTool,
+    rsvpTool,
+    hospedajeTool,
+    mesaRegalosTool,
+    galeriaTool,
+    cuentaRegresivaTool,
+    footerTool
+};
+
+// Exportar funciones de ejecución
 export { executeGetWeather } from './get-weather';
 export { executeCalculate } from './calculate';
 export { executeGetCurrentTime } from './get-current-time';
-
-// Exportar funciones de ejecución de boda
 export { executePortada } from './portada';
 export { executeNuestraHistoria } from './nuestra-historia';
 export { executeItinerario } from './itinerario';
@@ -33,20 +62,6 @@ export { executeCuentaRegresiva } from './cuenta-regresiva';
 export { executeFooter } from './footer';
 
 // Crear objeto con todas las herramientas para streamText
-import { getWeatherTool } from './get-weather';
-import { calculateTool } from './calculate';
-import { getCurrentTimeTool } from './get-current-time';
-import { portadaTool } from './portada';
-import { nuestraHistoriaTool } from './nuestra-historia';
-import { itinerarioTool } from './itinerario';
-import { ubicacionesTool } from './ubicaciones';
-import { rsvpTool } from './rsvp';
-import { hospedajeTool } from './hospedaje';
-import { mesaRegalosTool } from './mesa-regalos';
-import { galeriaTool } from './galeria';
-import { cuentaRegresivaTool } from './cuenta-regresiva';
-import { footerTool } from './footer';
-
 export const allTools = {
     [getWeatherTool.name]: {
         description: getWeatherTool.description,

@@ -132,6 +132,26 @@ export default function WeddingAgentsDemo() {
             title: '🧪 Prueba Valores por Defecto',
             description: 'Prueba agentes sin parámetros',
             message: 'Crea una portada, galería y cuenta regresiva usando valores por defecto'
+        },
+        {
+            title: '🎨 Estilo Vintage',
+            description: 'Prueba con estilo vintage personalizado',
+            message: 'Crea una portada con estilo vintage para la boda de Carlos y Ana el 20 de junio de 2024'
+        },
+        {
+            title: '🌴 Estilo Tropical',
+            description: 'Prueba con estilo tropical personalizado',
+            message: 'Crea una galería con estilo tropical para mostrar fotos de la boda'
+        },
+        {
+            title: '🏭 Estilo Industrial',
+            description: 'Prueba con estilo industrial personalizado',
+            message: 'Crea una cuenta regresiva con estilo industrial para la boda'
+        },
+        {
+            title: '🌿 Estilo Boho',
+            description: 'Prueba con estilo boho personalizado',
+            message: 'Crea un sitio completo con estilo boho para la boda de Laura y Miguel'
         }
     ];
 
@@ -151,6 +171,12 @@ export default function WeddingAgentsDemo() {
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                         Sistema modular de agentes especializados para crear sitios web de bodas
                     </p>
+                    <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-4xl mx-auto">
+                        <h3 className="text-lg font-medium text-blue-800 mb-2">🎨 Estilos Personalizados</h3>
+                        <p className="text-blue-700 text-sm">
+                            Puedes especificar cualquier estilo en tu prompt: <strong>romántico, elegante, vintage, tropical, industrial, boho, clásico, playero, campestre, urbano, artístico, minimalista</strong> o cualquier estilo personalizado que desees.
+                        </p>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

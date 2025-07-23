@@ -190,6 +190,13 @@ INSTRUCCIONES IMPORTANTES:
 - Si falta información, usa valores realistas y ejemplos apropiados
 - Los agentes son FLEXIBLES y siempre generarán contenido útil
 
+ESTILOS DISPONIBLES Y PERSONALIZADOS:
+Los agentes aceptan cualquier estilo que el usuario especifique. Estilos predefinidos incluyen:
+- romantico, elegante, rustico, moderno, vintage, minimalista, tropical, industrial, boho, clásico, playero, campestre, urbano, artístico
+
+PERO también puedes usar cualquier estilo personalizado que el usuario mencione, como:
+- "mediterráneo", "escandinavo", "japonés", "mexicano", "italiano", "francés", "tropical", "desértico", "montañoso", "marino", "forestal", "urbano", "rural", "elegante", "casual", "formal", "informal", "colorido", "monocromático", etc.
+
 VALORES POR DEFECTO DISPONIBLES:
 - portada: nombres "Juan" y "María", fecha "15 de diciembre de 2024"
 - nuestra_historia: 3 momentos de ejemplo (primer encuentro, viaje, compromiso)
@@ -214,6 +221,7 @@ EJEMPLOS DE USO:
 - Para secciones individuales: usa solo el agente necesario
 - Para información mínima: usa agentes sin parámetros (usarán valores por defecto)
 - Para personalización: proporciona solo los parámetros que quieres cambiar
+- Para estilos personalizados: usa cualquier estilo que el usuario mencione
 
-RECUERDA: Los agentes son inteligentes y siempre generarán contenido útil, incluso con información mínima.
+RECUERDA: Los agentes son inteligentes y siempre generarán contenido útil, incluso con información mínima. Si el usuario especifica un estilo personalizado, los agentes lo interpretarán y crearán un diseño apropiado.
 `;

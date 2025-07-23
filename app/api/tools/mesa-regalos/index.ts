@@ -1,143 +1,187 @@
 import { z } from 'zod';
+import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
+import { MESA_REGALOS_PROMPT } from './prompt';
 
 // Schema para la herramienta mesa de regalos
 export const mesaRegalosSchema = z.object({
-    titulo: z.string().optional().default('🎁 Mesa de Regalos').describe('Título de la sección'),
-    mensaje: z.string().optional().default('Tu presencia es nuestro mejor regalo, pero si deseas hacernos un detalle, aquí tienes algunas opciones').describe('Mensaje principal'),
-    opciones: z.array(z.object({
-        nombre: z.string().optional().default('Tienda de Departamentos').describe('Nombre de la opción'),
-        descripcion: z.string().optional().default('Artículos para el hogar y más').describe('Descripción de la opción'),
-        enlace: z.string().optional().default('https://tiendadepartamentos.com/mesa-regalos').describe('Enlace para la opción'),
-        icono: z.string().optional().default('🛍️').describe('Icono de la opción'),
-        tipo: z.enum(['tienda', 'transferencia', 'otro']).optional().default('tienda').describe('Tipo de opción'),
-        mensajeAgradecimiento: z.string().optional().default('¡Gracias por ser parte de nuestro día especial!').describe('Mensaje de agradecimiento')
+    regalos: z.array(z.object({
+        nombre: z.string().optional().default('Juego de Sábanas').describe('Nombre del regalo'),
+        descripcion: z.string().optional().default('Sábanas de algodón egipcio de alta calidad').describe('Descripción del regalo'),
+        precio: z.string().optional().default('$150').describe('Precio del regalo'),
+        categoria: z.string().optional().default('🏠 Hogar').describe('Categoría del regalo'),
+        imagen: z.string().optional().default('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80').describe('URL de la imagen del regalo'),
+        enlaceCompra: z.string().optional().default('https://tienda.com/regalo').describe('Enlace para comprar el regalo'),
+        disponible: z.boolean().optional().default(true).describe('Si el regalo está disponible')
     })).optional().default([
         {
-            nombre: 'Tienda de Departamentos',
-            descripcion: 'Artículos para el hogar y más',
-            enlace: 'https://tiendadepartamentos.com/mesa-regalos',
-            icono: '🛍️',
-            tipo: 'tienda',
-            mensajeAgradecimiento: '¡Gracias por ser parte de nuestro día especial!'
+            nombre: 'Juego de Sábanas',
+            descripcion: 'Sábanas de algodón egipcio de alta calidad',
+            precio: '$150',
+            categoria: '🏠 Hogar',
+            imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+            enlaceCompra: 'https://tienda.com/regalo',
+            disponible: true
         },
         {
-            nombre: 'Transferencia Bancaria',
-            descripcion: 'Contribuye a nuestra luna de miel',
-            enlace: 'https://banco.com/transferencia',
-            icono: '💳',
-            tipo: 'transferencia',
-            mensajeAgradecimiento: '¡Gracias por ser parte de nuestro día especial!'
+            nombre: 'Contribución para Luna de Miel',
+            descripcion: 'Ayúdanos a hacer realidad nuestro viaje de ensueño',
+            precio: 'Cualquier monto',
+            categoria: '✈️ Viaje',
+            imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+            enlaceCompra: 'https://paypal.com/contribucion',
+            disponible: true
         }
-    ]).describe('Array de opciones de regalos'),
-    mensajeAgradecimiento: z.string().optional().default('¡Gracias por ser parte de nuestro día especial!').describe('Mensaje de agradecimiento general'),
-    estilo: z.enum(['elegante', 'moderno', 'rustico']).optional().default('elegante').describe('Estilo visual de la sección')
+    ]).describe('Array de regalos disponibles'),
+    mensaje: z.string().optional().default('Tu presencia es nuestro mejor regalo, pero si deseas hacernos un obsequio, aquí tienes algunas opciones que nos encantarían').describe('Mensaje sobre los regalos'),
+    estilo: z.enum(['cards', 'list', 'grid']).optional().default('cards').describe('Estilo de presentación de los regalos')
 });
 
 // Función de ejecución
 export async function executeMesaRegalos(args: z.infer<typeof mesaRegalosSchema>) {
     const {
-        titulo = '🎁 Mesa de Regalos',
-        mensaje = 'Tu presencia es nuestro mejor regalo, pero si deseas hacernos un detalle, aquí tienes algunas opciones',
-        opciones = [
+        regalos = [
             {
-                nombre: 'Tienda de Departamentos',
-                descripcion: 'Artículos para el hogar y más',
-                enlace: 'https://tiendadepartamentos.com/mesa-regalos',
-                icono: '🛍️',
-                tipo: 'tienda',
-                mensajeAgradecimiento: '¡Gracias por ser parte de nuestro día especial!'
+                nombre: 'Juego de Sábanas',
+                descripcion: 'Sábanas de algodón egipcio de alta calidad',
+                precio: '$150',
+                categoria: '🏠 Hogar',
+                imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+                enlaceCompra: 'https://tienda.com/regalo',
+                disponible: true
             },
             {
-                nombre: 'Transferencia Bancaria',
-                descripcion: 'Contribuye a nuestra luna de miel',
-                enlace: 'https://banco.com/transferencia',
-                icono: '💳',
-                tipo: 'transferencia',
-                mensajeAgradecimiento: '¡Gracias por ser parte de nuestro día especial!'
+                nombre: 'Contribución para Luna de Miel',
+                descripcion: 'Ayúdanos a hacer realidad nuestro viaje de ensueño',
+                precio: 'Cualquier monto',
+                categoria: '✈️ Viaje',
+                imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+                enlaceCompra: 'https://paypal.com/contribucion',
+                disponible: true
             }
         ],
-        mensajeAgradecimiento = '¡Gracias por ser parte de nuestro día especial!',
-        estilo = 'elegante'
+        mensaje = 'Tu presencia es nuestro mejor regalo, pero si deseas hacernos un obsequio, aquí tienes algunas opciones que nos encantarían',
+        estilo = 'cards'
     } = args;
 
-    const getEstiloColores = (estilo: string) => {
-        switch (estilo) {
-            case 'elegante':
-                return {
-                    bg: 'bg-gradient-to-br from-amber-50 to-orange-100',
-                    card: 'bg-white',
-                    button: 'bg-amber-500 hover:bg-amber-600',
-                    text: 'text-amber-700'
-                };
-            case 'moderno':
-                return {
-                    bg: 'bg-gradient-to-br from-slate-50 to-gray-100',
-                    card: 'bg-white',
-                    button: 'bg-slate-500 hover:bg-slate-600',
-                    text: 'text-slate-700'
-                };
-            case 'rustico':
-                return {
-                    bg: 'bg-gradient-to-br from-rose-50 to-pink-100',
-                    card: 'bg-white',
-                    button: 'bg-rose-500 hover:bg-rose-600',
-                    text: 'text-rose-700'
-                };
-            default:
-                return {
-                    bg: 'bg-gradient-to-br from-amber-50 to-orange-100',
-                    card: 'bg-white',
-                    button: 'bg-amber-500 hover:bg-amber-600',
-                    text: 'text-amber-700'
-                };
-        }
-    };
+    try {
+        // Crear el prompt específico con los datos de la mesa de regalos
+        const userPrompt = `
+Crea la sección de "Mesa de Regalos" para la boda.
 
-    const colors = getEstiloColores(estilo);
+DETALLES DE LA MESA DE REGALOS:
+- Mensaje: ${mensaje}
+- Estilo de presentación: ${estilo}
+- Número de regalos: ${regalos.length}
 
-    return `
-    <section class="py-20 ${colors.bg}">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-light mb-6 text-gray-800">
-                    ${titulo}
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                    ${mensaje}
-                </p>
-                <p class="text-lg ${colors.text} font-medium">
-                    ${mensajeAgradecimiento}
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                ${opciones.map((opcion, index) => `
-                    <div class="${colors.card} rounded-xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
-                        <div class="text-center mb-6">
-                            <div class="text-5xl mb-4">${opcion.icono}</div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-2">${opcion.nombre}</h3>
-                            <p class="text-gray-600">${opcion.descripcion}</p>
+REGALOS DISPONIBLES:
+${regalos.map((regalo, index) => `
+${index + 1}. ${regalo.nombre}
+   - Descripción: ${regalo.descripcion}
+   - Precio: ${regalo.precio}
+   - Categoría: ${regalo.categoria}
+   - Disponible: ${regalo.disponible ? 'Sí' : 'No'}
+   - Enlace: ${regalo.enlaceCompra}
+   - Imagen: ${regalo.imagen}
+`).join('\n')}
+
+Genera el HTML para la sección de mesa de regalos siguiendo las especificaciones del prompt.
+`;
+
+        // Llamada a OpenAI
+        const result = await generateText({
+            model: openai('gpt-4o'),
+            messages: [
+                { role: 'system', content: MESA_REGALOS_PROMPT },
+                { role: 'user', content: userPrompt }
+            ],
+            maxTokens: 3000,
+            temperature: 0.7
+        });
+
+        return result.text;
+
+    } catch (error) {
+        console.error('Error en executeMesaRegalos:', error);
+        // HTML de fallback en caso de error
+        return `
+        <section class="py-20 bg-gradient-to-br from-amber-50 to-orange-100">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-light mb-6 text-gray-800">
+                        🎁 Mesa de Regalos
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        ${mensaje}
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    ${regalos.map((regalo, index) => `
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="${regalo.imagen}" 
+                                     alt="${regalo.nombre}" 
+                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-20"></div>
+                                <div class="absolute top-4 left-4">
+                                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">
+                                        ${regalo.categoria}
+                                    </span>
+                                </div>
+                                ${!regalo.disponible ? `
+                                    <div class="absolute top-4 right-4">
+                                        <span class="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700">
+                                            Agotado
+                                        </span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">${regalo.nombre}</h3>
+                                <p class="text-gray-600 mb-4 leading-relaxed">${regalo.descripcion}</p>
+                                
+                                <div class="flex items-center justify-between mb-6">
+                                    <span class="text-2xl font-bold text-amber-600">${regalo.precio}</span>
+                                    ${regalo.disponible ? `
+                                        <span class="text-green-600 text-sm font-medium">✓ Disponible</span>
+                                    ` : `
+                                        <span class="text-red-600 text-sm font-medium">✗ Agotado</span>
+                                    `}
+                                </div>
+                                
+                                ${regalo.disponible ? `
+                                    <a href="${regalo.enlaceCompra}" 
+                                       target="_blank" 
+                                       class="block w-full bg-amber-500 hover:bg-amber-600 text-white text-center font-medium py-3 px-6 rounded-lg transition-colors duration-300">
+                                        🎁 Comprar Regalo
+                                    </a>
+                                ` : `
+                                    <button disabled class="block w-full bg-gray-300 text-gray-500 text-center font-medium py-3 px-6 rounded-lg cursor-not-allowed">
+                                        🎁 Agotado
+                                    </button>
+                                `}
+                            </div>
                         </div>
-                        
-                        <div class="text-center">
-                            <a href="${opcion.enlace}" 
-                               target="_blank" 
-                               class="inline-block ${colors.button} text-white px-6 py-3 rounded-lg font-medium transition-colors duration-300 transform hover:scale-105">
-                                ${opcion.tipo === 'transferencia' ? '💳 Transferir' : '🛍️ Ver Opciones'}
-                            </a>
-                        </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
+                
+                <div class="text-center mt-12">
+                    <p class="text-gray-600 italic">
+                        💝 Tu presencia es nuestro mejor regalo
+                    </p>
+                </div>
             </div>
-        </div>
-    </section>
-    `;
+        </section>
+        `;
+    }
 }
 
 // Configuración de la herramienta
 export const mesaRegalosTool = {
     name: 'mesa_regalos',
-    description: 'Genera la sección de mesa de regalos con opciones de regalos',
+    description: 'Genera la sección de mesa de regalos con opciones de obsequios',
     parameters: mesaRegalosSchema,
     execute: executeMesaRegalos
 }; 

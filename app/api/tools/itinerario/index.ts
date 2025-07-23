@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
+import { ITINERARIO_PROMPT } from './prompt';
 
 // Schema para la herramienta itinerario
 export const itinerarioSchema = z.object({
@@ -68,9 +71,42 @@ export async function executeItinerario(args: z.infer<typeof itinerarioSchema>) 
         estilo = 'timeline'
     } = args;
 
-    const iconosPorDefecto = ['💒', '🥂', '🍽️', '💃', '🎂', '🎉', '💝', '🌙'];
+    try {
+        // Crear el prompt específico con los datos del itinerario
+        const userPrompt = `
+Crea la sección de "Itinerario del Evento" para la boda.
 
-    if (estilo === 'timeline') {
+DETALLES DEL ITINERARIO:
+- Estilo de presentación: ${estilo}
+- Número de eventos: ${eventos.length}
+
+EVENTOS DEL DÍA:
+${eventos.map((evento, index) => `
+${index + 1}. ${evento.titulo}
+   - Hora: ${evento.hora}
+   - Descripción: ${evento.descripcion}
+   - Icono: ${evento.icono}
+`).join('\n')}
+
+Genera el HTML para la sección de itinerario siguiendo las especificaciones del prompt.
+`;
+
+        // Llamada a OpenAI
+        const result = await generateText({
+            model: openai('gpt-4o'),
+            messages: [
+                { role: 'system', content: ITINERARIO_PROMPT },
+                { role: 'user', content: userPrompt }
+            ],
+            maxTokens: 3000,
+            temperature: 0.7
+        });
+
+        return result.text;
+
+    } catch (error) {
+        console.error('Error en executeItinerario:', error);
+        // HTML de fallback en caso de error
         return `
         <section class="py-20 bg-gradient-to-br from-rose-50 to-pink-100">
             <div class="container mx-auto px-4">
@@ -80,17 +116,14 @@ export async function executeItinerario(args: z.infer<typeof itinerarioSchema>) 
                 
                 <div class="max-w-4xl mx-auto">
                     <div class="relative">
-                        <!-- Línea vertical -->
                         <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-rose-200 to-pink-300"></div>
                         
                         ${eventos.map((evento, index) => `
                             <div class="relative flex items-center mb-8">
-                                <!-- Icono y círculo -->
                                 <div class="absolute left-0 w-16 h-16 bg-white rounded-full shadow-lg border-4 border-rose-200 flex items-center justify-center z-10">
-                                    <span class="text-2xl">${evento.icono || iconosPorDefecto[index % iconosPorDefecto.length]}</span>
+                                    <span class="text-2xl">${evento.icono}</span>
                                 </div>
                                 
-                                <!-- Contenido -->
                                 <div class="ml-20 bg-white p-6 rounded-lg shadow-lg border border-gray-100 flex-1">
                                     <div class="flex items-center justify-between mb-2">
                                         <h3 class="text-xl font-semibold text-gray-800">${evento.titulo}</h3>
@@ -106,61 +139,6 @@ export async function executeItinerario(args: z.infer<typeof itinerarioSchema>) 
         </section>
         `;
     }
-
-    if (estilo === 'cards') {
-        return `
-        <section class="py-20 bg-white">
-            <div class="container mx-auto px-4">
-                <h2 class="text-4xl md:text-5xl font-light text-center mb-16 text-gray-800">
-                    ⏰ Itinerario del Evento
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    ${eventos.map((evento, index) => `
-                        <div class="bg-gradient-to-br from-rose-50 to-pink-100 rounded-xl p-6 shadow-lg border border-rose-100 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-center mb-4">
-                                <div class="text-4xl mb-2">${evento.icono || iconosPorDefecto[index % iconosPorDefecto.length]}</div>
-                                <div class="text-2xl font-bold text-rose-500">${evento.hora}</div>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-800 text-center mb-3">${evento.titulo}</h3>
-                            <p class="text-gray-600 text-center leading-relaxed">${evento.descripcion}</p>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </section>
-        `;
-    }
-
-    // Estilo list por defecto
-    return `
-    <section class="py-20 bg-gradient-to-br from-rose-50 to-pink-100">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl md:text-5xl font-light text-center mb-16 text-gray-800">
-                ⏰ Itinerario del Evento
-            </h2>
-            
-            <div class="max-w-3xl mx-auto">
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    ${eventos.map((evento, index) => `
-                        <div class="flex items-center p-6 ${index !== eventos.length - 1 ? 'border-b border-gray-100' : ''}">
-                            <div class="flex-shrink-0 w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mr-4">
-                                <span class="text-xl">${evento.icono || iconosPorDefecto[index % iconosPorDefecto.length]}</span>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between mb-1">
-                                    <h3 class="text-lg font-semibold text-gray-800">${evento.titulo}</h3>
-                                    <span class="text-sm font-medium text-rose-500 bg-rose-50 px-3 py-1 rounded-full">${evento.hora}</span>
-                                </div>
-                                <p class="text-gray-600">${evento.descripcion}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
-    </section>
-    `;
 }
 
 // Configuración de la herramienta

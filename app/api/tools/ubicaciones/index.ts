@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
+import { UBICACIONES_PROMPT } from './prompt';
 
 // Schema para la herramienta ubicaciones
 export const ubicacionesSchema = z.object({
@@ -69,109 +72,110 @@ export async function executeUbicaciones(args: z.infer<typeof ubicacionesSchema>
         mostrarMapa = true
     } = args;
 
-    const getTipoIcon = (tipo: string) => {
-        switch (tipo) {
-            case 'ceremonia': return '💒';
-            case 'recepcion': return '🍽️';
-            case 'ambos': return '🎉';
-            default: return '📍';
-        }
-    };
+    try {
+        // Crear el prompt específico con los datos de las ubicaciones
+        const userPrompt = `
+Crea la sección de "Ubicaciones" para la boda.
 
-    const getTipoColor = (tipo: string) => {
-        switch (tipo) {
-            case 'ceremonia': return 'bg-blue-100 text-blue-700';
-            case 'recepcion': return 'bg-green-100 text-green-700';
-            case 'ambos': return 'bg-purple-100 text-purple-700';
-            default: return 'bg-gray-100 text-gray-700';
-        }
-    };
+DETALLES DE LAS UBICACIONES:
+- Mostrar mapa general: ${mostrarMapa}
+- Número de lugares: ${lugares.length}
 
-    return `
-    <section class="py-20 bg-gradient-to-br from-gray-50 to-slate-100">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-light mb-6 text-gray-800">
-                    📍 Ubicaciones
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Los lugares donde celebraremos nuestro amor
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                ${lugares.map((lugar, index) => `
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                        <div class="relative h-48 overflow-hidden">
-                            <img src="${lugar.imagen}" 
-                                 alt="${lugar.nombre}" 
-                                 class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-20"></div>
-                            <div class="absolute top-4 left-4">
-                                <span class="px-3 py-1 rounded-full text-sm font-medium ${getTipoColor(lugar.tipo)}">
-                                    ${getTipoIcon(lugar.tipo)} ${lugar.tipo.charAt(0).toUpperCase() + lugar.tipo.slice(1)}
-                                </span>
+LUGARES DEL EVENTO:
+${lugares.map((lugar, index) => `
+${index + 1}. ${lugar.nombre}
+   - Dirección: ${lugar.direccion}
+   - Coordenadas: ${lugar.coordenadas}
+   - Descripción: ${lugar.descripcion}
+   - Tipo: ${lugar.tipo}
+   - Horario: ${lugar.horario}
+   - Instrucciones: ${lugar.instrucciones}
+   - Imagen: ${lugar.imagen}
+`).join('\n')}
+
+Genera el HTML para la sección de ubicaciones siguiendo las especificaciones del prompt.
+`;
+
+        // Llamada a OpenAI
+        const result = await generateText({
+            model: openai('gpt-4o'),
+            messages: [
+                { role: 'system', content: UBICACIONES_PROMPT },
+                { role: 'user', content: userPrompt }
+            ],
+            maxTokens: 3000,
+            temperature: 0.7
+        });
+
+        return result.text;
+
+    } catch (error) {
+        console.error('Error en executeUbicaciones:', error);
+        // HTML de fallback en caso de error
+        return `
+        <section class="py-20 bg-gradient-to-br from-gray-50 to-slate-100">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-light mb-6 text-gray-800">
+                        📍 Ubicaciones
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Los lugares donde celebraremos nuestro amor
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                    ${lugares.map((lugar, index) => `
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                            <div class="relative h-48 overflow-hidden">
+                                <img src="${lugar.imagen}" 
+                                     alt="${lugar.nombre}" 
+                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-20"></div>
+                                <div class="absolute top-4 left-4">
+                                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
+                                        ${lugar.tipo === 'ceremonia' ? '💒' : lugar.tipo === 'recepcion' ? '🍽️' : '🎉'} ${lugar.tipo.charAt(0).toUpperCase() + lugar.tipo.slice(1)}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="p-6">
-                            <h3 class="text-2xl font-semibold text-gray-800 mb-3">${lugar.nombre}</h3>
-                            <p class="text-gray-600 mb-4 leading-relaxed">${lugar.descripcion}</p>
                             
-                            <div class="space-y-3">
-                                <div class="flex items-start">
-                                    <span class="text-gray-400 mr-3 mt-1">📍</span>
-                                    <div>
-                                        <div class="font-medium text-gray-800">${lugar.direccion}</div>
-                                        ${lugar.mostrarMapa ? `
-                                            <a href="https://maps.google.com/?q=${lugar.coordenadas}" 
-                                               target="_blank" 
-                                               class="text-blue-500 hover:text-blue-600 text-sm">
-                                                Ver en Google Maps →
-                                            </a>
-                                        ` : ''}
+                            <div class="p-6">
+                                <h3 class="text-2xl font-semibold text-gray-800 mb-3">${lugar.nombre}</h3>
+                                <p class="text-gray-600 mb-4 leading-relaxed">${lugar.descripcion}</p>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="text-gray-400 mr-3 mt-1">📍</span>
+                                        <div>
+                                            <div class="font-medium text-gray-800">${lugar.direccion}</div>
+                                            ${lugar.mostrarMapa ? `
+                                                <a href="https://maps.google.com/?q=${lugar.coordenadas}" 
+                                                   target="_blank" 
+                                                   class="text-blue-500 hover:text-blue-600 text-sm">
+                                                    Ver en Google Maps →
+                                                </a>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <span class="text-gray-400 mr-3">⏰</span>
+                                        <span class="text-gray-700">${lugar.horario}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="text-gray-400 mr-3 mt-1">ℹ️</span>
+                                        <span class="text-gray-700 text-sm">${lugar.instrucciones}</span>
                                     </div>
                                 </div>
-                                
-                                <div class="flex items-center">
-                                    <span class="text-gray-400 mr-3">⏰</span>
-                                    <span class="text-gray-700">${lugar.horario}</span>
-                                </div>
-                                
-                                <div class="flex items-start">
-                                    <span class="text-gray-400 mr-3 mt-1">ℹ️</span>
-                                    <span class="text-gray-700 text-sm">${lugar.instrucciones}</span>
-                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('')}
-            </div>
-            
-            ${mostrarMapa ? `
-                <div class="mt-12 max-w-4xl mx-auto">
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="p-6 border-b border-gray-100">
-                            <h3 class="text-xl font-semibold text-gray-800">🗺️ Mapa General</h3>
-                            <p class="text-gray-600">Ubicación de todos los lugares del evento</p>
-                        </div>
-                        <div class="h-96">
-                            <iframe 
-                                src="https://www.google.com/maps/embed/v1/view?key=YOUR_API_KEY&center=${lugares[0]?.coordenadas || '19.4326,-99.1332'}&zoom=13" 
-                                width="100%" 
-                                height="100%" 
-                                style="border:0;" 
-                                allowfullscreen="" 
-                                loading="lazy" 
-                                referrerpolicy="no-referrer-when-downgrade">
-                            </iframe>
-                        </div>
-                    </div>
+                    `).join('')}
                 </div>
-            ` : ''}
-        </div>
-    </section>
-    `;
+            </div>
+        </section>
+        `;
+    }
 }
 
 // Configuración de la herramienta
