@@ -15,7 +15,7 @@ export const hospedajeSchema = z.object({
         enlaceReserva: z.string().optional().default('https://hotelcentral.com/reservas').describe('Enlace para hacer reserva'),
         telefono: z.string().optional().default('555-1234-567').describe('Teléfono del hotel'),
         caracteristicas: z.array(z.string()).optional().default(['WiFi gratuito', 'Desayuno incluido', 'Piscina']).describe('Características del hotel'),
-        estilo: z.enum(['cards', 'list', 'grid']).optional().default('cards').describe('Estilo de presentación')
+        estilo: z.string().optional().default('minimalista').describe('Estilo de presentación (puede ser: minimalista, cards, list, grid, o cualquier estilo personalizado)')
     })).optional().default([
         {
             nombre: 'Hotel Central',
@@ -42,7 +42,7 @@ export const hospedajeSchema = z.object({
             estilo: 'cards'
         }
     ]).describe('Array de hoteles recomendados'),
-    estilo: z.enum(['cards', 'list', 'grid']).optional().default('cards').describe('Estilo de presentación de los hoteles')
+    estilo: z.string().optional().default('minimalista').describe('Estilo de presentación de los hoteles (puede ser: minimalista, cards, list, grid, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
@@ -59,7 +59,7 @@ export async function executeHospedaje(args: z.infer<typeof hospedajeSchema>) {
                 enlaceReserva: 'https://hotelcentral.com/reservas',
                 telefono: '555-1234-567',
                 caracteristicas: ['WiFi gratuito', 'Desayuno incluido', 'Piscina'],
-                estilo: 'cards'
+                estilo: 'minimalista'
             },
             {
                 nombre: 'Hotel Elegance',
@@ -71,10 +71,10 @@ export async function executeHospedaje(args: z.infer<typeof hospedajeSchema>) {
                 enlaceReserva: 'https://hotelelegance.com/reservas',
                 telefono: '555-9876-543',
                 caracteristicas: ['WiFi gratuito', 'Desayuno incluido', 'Piscina', 'Spa', 'Restaurante'],
-                estilo: 'cards'
+                estilo: 'minimalista'
             }
         ],
-        estilo = 'cards'
+        estilo = 'minimalista'
     } = args;
 
     try {

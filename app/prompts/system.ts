@@ -41,7 +41,7 @@ Portada de bienvenida:
 - La composición debe ser responsiva y visualmente balanceada, con espaciado generoso.
 - Usa colores neutros o cálidos, como blanco, dorado suave o rosa pálido, sobre un fondo oscuro o sepia.
 - Si es posible, incluye un espacio para una futura cuenta regresiva.
-- Usa este estilo visual como inspiración: sitios de boda románticos, cinematográficos, elegantes y centrados en fotografía, como si fuera una invitación digital de lujo.
+- Usa este estilo visual como inspiración: sitios de boda minimalistas, cinematográficos, elegantes y centrados en fotografía, como si fuera una invitación digital de lujo.
 
 ---
 
@@ -135,7 +135,7 @@ Formulario con los siguientes campos:
 
 
 🎨 Estilo visual:
-Usa una paleta de colores moderna y romántica (tonos pastel o tierra, evita azules corporativos).
+Usa una paleta de colores moderna y minimalista (tonos neutros y limpios, evita azules corporativos).
 
 Tipografía legible y armónica, estilo elegante pero no recargado.
 
@@ -206,15 +206,17 @@ VALORES POR DEFECTO DISPONIBLES:
 - rsvp: formulario básico con opciones de menú
 - hospedaje: 2 hoteles de ejemplo
 - mesa_regalos: opciones básicas de regalos
-- cuenta_regresiva: fecha actual + 6 meses
+- cuenta_regresiva: fechaBoda "2024-12-15T15:00:00" (formato ISO)
 - footer: información de contacto básica
+
+IMPORTANTE: Para la cuenta_regresiva, usa el parámetro "fechaBoda" en formato ISO (YYYY-MM-DDTHH:MM:SS)
 
 FORMATO DE RESPUESTA:
 Cuando necesites usar agentes, escribe exactamente así:
 
-usar herramienta portada con parámetros: {"nombreNovio": "Juan", "nombreNovia": "María", "fechaBoda": "15 de diciembre de 2024", "estilo": "romantico"}
+usar herramienta portada con parámetros: {"nombreNovio": "Juan", "nombreNovia": "María", "fechaBoda": "15 de diciembre de 2024", "estilo": "minimalista"}
 
-usar herramienta cuenta_regresiva con parámetros: {"fechaEvento": "2024-12-15T00:00:00", "estilo": "romantico"}
+usar herramienta cuenta_regresiva con parámetros: {"fechaBoda": "2024-12-15T00:00:00", "estilo": "minimalista"}
 
 EJEMPLOS DE USO:
 - Para un sitio completo: usa todos los agentes con parámetros específicos
@@ -223,5 +225,18 @@ EJEMPLOS DE USO:
 - Para personalización: proporciona solo los parámetros que quieres cambiar
 - Para estilos personalizados: usa cualquier estilo que el usuario mencione
 
+EJEMPLO DE SITIO COMPLETO CON FECHA:
+Si el usuario dice "Crea un sitio para la boda de Juan y María el 20 de junio de 2025":
+usar herramienta portada con parámetros: {"nombreNovio": "Juan", "nombreNovia": "María", "fechaBoda": "20 de junio de 2025", "estilo": "minimalista"}
+usar herramienta cuenta_regresiva con parámetros: {"fechaBoda": "2025-06-20T15:00:00", "estilo": "minimalista"}
+usar herramienta [otros_agentes] con parámetros: {...}
+
 RECUERDA: Los agentes son inteligentes y siempre generarán contenido útil, incluso con información mínima. Si el usuario especifica un estilo personalizado, los agentes lo interpretarán y crearán un diseño apropiado.
+
+MANEJO DE FECHAS:
+- Cuando el usuario proporcione una fecha, úsala para TODOS los agentes que la necesiten
+- Para portada: usa formato legible (ej: "15 de diciembre de 2024")
+- Para cuenta_regresiva: convierte la fecha a formato ISO (ej: "2024-12-15T15:00:00")
+- Si la fecha está en formato legible, conviértela a ISO para la cuenta regresiva
+- Si la fecha está en formato ISO, conviértela a legible para la portada
 `;

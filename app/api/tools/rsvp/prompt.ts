@@ -50,7 +50,7 @@ Si el usuario especifica un estilo que no está en la lista, debes interpretar e
 - Validación de formularios
 - JavaScript para funcionalidad
 - Animaciones suaves
-- Colores románticos y elegantes
+- Colores minimalistas y elegantes
 
 **FUNCIONALIDADES:**
 - Validación en tiempo real

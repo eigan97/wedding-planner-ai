@@ -10,24 +10,24 @@ export const nuestraHistoriaSchema = z.object({
         titulo: z.string().optional().default('Momentos especiales').describe('Título del momento'),
         descripcion: z.string().optional().default('Descripción del momento especial').describe('Descripción del momento'),
         imagen: z.string().optional().default('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80').describe('URL de la imagen del momento'),
-        estilo: z.string().optional().default('timeline').describe('Estilo de presentación (puede ser: timeline, cards, story, o cualquier estilo personalizado)')
+        estilo: z.string().optional().default('minimalista').describe('Estilo de presentación (puede ser: minimalista, timeline, cards, story, o cualquier estilo personalizado)')
     })).optional().default([
-        { fecha: '2020-01-01', titulo: 'Primer Encuentro', descripcion: 'El día que nuestros caminos se cruzaron por primera vez', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'timeline' },
-        { fecha: '2021-06-15', titulo: 'Primer Viaje Juntos', descripcion: 'Nuestro primer viaje juntos, lleno de aventuras y risas', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'timeline' },
-        { fecha: '2023-12-25', titulo: 'El Compromiso', descripcion: 'El momento más especial cuando decidimos unir nuestras vidas para siempre', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'timeline' }
+        { fecha: '2020-01-01', titulo: 'Primer Encuentro', descripcion: 'El día que nuestros caminos se cruzaron por primera vez', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'minimalista' },
+        { fecha: '2021-06-15', titulo: 'Primer Viaje Juntos', descripcion: 'Nuestro primer viaje juntos, lleno de aventuras y risas', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'minimalista' },
+        { fecha: '2023-12-25', titulo: 'El Compromiso', descripcion: 'El momento más especial cuando decidimos unir nuestras vidas para siempre', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'minimalista' }
     ]).describe('Array de momentos importantes en la relación'),
-    estilo: z.string().optional().default('timeline').describe('Estilo de presentación de la historia (puede ser: timeline, cards, story, o cualquier estilo personalizado)')
+    estilo: z.string().optional().default('minimalista').describe('Estilo de presentación de la historia (puede ser: minimalista, timeline, cards, story, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
 export async function executeNuestraHistoria(args: z.infer<typeof nuestraHistoriaSchema>) {
     const {
         momentos = [
-            { fecha: '2020-01-01', titulo: 'Primer Encuentro', descripcion: 'El día que nuestros caminos se cruzaron por primera vez', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'timeline' },
-            { fecha: '2021-06-15', titulo: 'Primer Viaje Juntos', descripcion: 'Nuestro primer viaje juntos, lleno de aventuras y risas', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'timeline' },
-            { fecha: '2023-12-25', titulo: 'El Compromiso', descripcion: 'El momento más especial cuando decidimos unir nuestras vidas para siempre', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'timeline' }
+            { fecha: '2020-01-01', titulo: 'Primer Encuentro', descripcion: 'El día que nuestros caminos se cruzaron por primera vez', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'minimalista' },
+            { fecha: '2021-06-15', titulo: 'Primer Viaje Juntos', descripcion: 'Nuestro primer viaje juntos, lleno de aventuras y risas', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'minimalista' },
+            { fecha: '2023-12-25', titulo: 'El Compromiso', descripcion: 'El momento más especial cuando decidimos unir nuestras vidas para siempre', imagen: 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80', estilo: 'minimalista' }
         ],
-        estilo = 'timeline'
+        estilo = 'minimalista'
     } = args;
 
     try {

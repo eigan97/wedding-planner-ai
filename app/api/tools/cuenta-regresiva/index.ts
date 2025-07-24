@@ -8,7 +8,7 @@ export const cuentaRegresivaSchema = z.object({
     fechaBoda: z.string().optional().default('2024-12-15T15:00:00').describe('Fecha y hora de la boda (ISO string)'),
     titulo: z.string().optional().default('⏰ Cuenta Regresiva').describe('Título de la sección'),
     mensaje: z.string().optional().default('Faltan solo unos días para nuestro gran día').describe('Mensaje de la cuenta regresiva'),
-    estilo: z.string().optional().default('cards').describe('Estilo de presentación del contador (puede ser: cards, circle, minimal, elegant, o cualquier estilo personalizado)'),
+    estilo: z.string().optional().default('minimalista').describe('Estilo de presentación del contador (puede ser: minimalista, cards, circle, minimal, elegant, o cualquier estilo personalizado)'),
     mostrarSegundos: z.boolean().optional().default(true).describe('Mostrar segundos en el contador')
 });
 
@@ -18,7 +18,7 @@ export async function executeCuentaRegresiva(args: z.infer<typeof cuentaRegresiv
         fechaBoda = '2024-12-15T15:00:00',
         titulo = '⏰ Cuenta Regresiva',
         mensaje = 'Faltan solo unos días para nuestro gran día',
-        estilo = 'cards',
+        estilo = 'minimalista',
         mostrarSegundos = true
     } = args;
 
@@ -98,7 +98,31 @@ Genera el HTML para la sección de cuenta regresiva siguiendo las especificacion
             </div>
             
             <script>
-                const fechaBoda = new Date('${fechaBoda}').getTime();
+                // Función para validar y parsear la fecha
+                function parsearFecha(fechaString) {
+                    // Intentar diferentes formatos de fecha
+                    const formatos = [
+                        fechaString, // Formato original
+                        fechaString.replace('T', ' '), // Sin T
+                        fechaString.split('T')[0] + ' 00:00:00', // Solo fecha
+                        new Date().getFullYear() + '-' + fechaString.split('-').slice(1).join('-'), // Año actual
+                        new Date().getFullYear() + 1 + '-' + fechaString.split('-').slice(1).join('-') // Próximo año
+                    ];
+                    
+                    for (let formato of formatos) {
+                        const fecha = new Date(formato);
+                        if (!isNaN(fecha.getTime())) {
+                            return fecha.getTime();
+                        }
+                    }
+                    
+                    // Si no se puede parsear, usar una fecha futura por defecto
+                    const fechaFutura = new Date();
+                    fechaFutura.setMonth(fechaFutura.getMonth() + 6); // 6 meses en el futuro
+                    return fechaFutura.getTime();
+                }
+                
+                const fechaBoda = parsearFecha('${fechaBoda}');
                 
                 function actualizarContador() {
                     const ahora = new Date().getTime();
@@ -106,20 +130,27 @@ Genera el HTML para la sección de cuenta regresiva siguiendo las especificacion
                     
                     if (diferencia <= 0) {
                         // La boda ya llegó
-                        document.querySelector('.grid').style.display = 'none';
-                        document.getElementById('mensaje-final').classList.remove('hidden');
+                        const gridElement = document.querySelector('.grid');
+                        const mensajeFinal = document.getElementById('mensaje-final');
+                        if (gridElement) gridElement.style.display = 'none';
+                        if (mensajeFinal) mensajeFinal.classList.remove('hidden');
                         return;
                     }
                     
-                    const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
-                    const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-                    const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+                    const dias = Math.max(0, Math.floor(diferencia / (1000 * 60 * 60 * 24)));
+                    const horas = Math.max(0, Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+                    const minutos = Math.max(0, Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60)));
+                    const segundos = Math.max(0, Math.floor((diferencia % (1000 * 60)) / 1000));
                     
-                    document.getElementById('dias').textContent = dias.toString().padStart(2, '0');
-                    document.getElementById('horas').textContent = horas.toString().padStart(2, '0');
-                    document.getElementById('minutos').textContent = minutos.toString().padStart(2, '0');
-                    ${mostrarSegundos ? `document.getElementById('segundos').textContent = segundos.toString().padStart(2, '0');` : ''}
+                    const diasElement = document.getElementById('dias');
+                    const horasElement = document.getElementById('horas');
+                    const minutosElement = document.getElementById('minutos');
+                    const segundosElement = document.getElementById('segundos');
+                    
+                    if (diasElement) diasElement.textContent = dias.toString().padStart(2, '0');
+                    if (horasElement) horasElement.textContent = horas.toString().padStart(2, '0');
+                    if (minutosElement) minutosElement.textContent = minutos.toString().padStart(2, '0');
+                    ${mostrarSegundos ? `if (segundosElement) segundosElement.textContent = segundos.toString().padStart(2, '0');` : ''}
                 }
                 
                 // Actualizar cada segundo

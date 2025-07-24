@@ -100,7 +100,7 @@ export default function WeddingAgentsDemo() {
         {
             title: '🏠 Portada Simple',
             description: 'Genera solo la sección de portada',
-            message: 'Crea la portada para la boda de Juan y María el 15 de diciembre de 2024 con estilo romántico'
+            message: 'Crea la portada para la boda de Juan y María el 15 de diciembre de 2024 con estilo minimalista'
         },
         {
             title: '⏳ Cuenta Regresiva',
@@ -128,11 +128,7 @@ export default function WeddingAgentsDemo() {
             message: 'Crea la galería de fotos con estas fotos: foto1.jpg, foto2.jpg, foto3.jpg. Títulos: "Primer encuentro", "Viaje juntos", "Compromiso"'
         },
 
-        {
-            title: '🧪 Prueba Valores por Defecto',
-            description: 'Prueba agentes sin parámetros',
-            message: 'Crea una portada, galería y cuenta regresiva usando valores por defecto'
-        },
+
         {
             title: '🎨 Estilo Vintage',
             description: 'Prueba con estilo vintage personalizado',
@@ -174,7 +170,7 @@ export default function WeddingAgentsDemo() {
                     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-4xl mx-auto">
                         <h3 className="text-lg font-medium text-blue-800 mb-2">🎨 Estilos Personalizados</h3>
                         <p className="text-blue-700 text-sm">
-                            Puedes especificar cualquier estilo en tu prompt: <strong>romántico, elegante, vintage, tropical, industrial, boho, clásico, playero, campestre, urbano, artístico, minimalista</strong> o cualquier estilo personalizado que desees.
+                            Puedes especificar cualquier estilo en tu prompt: <strong>minimalista, elegante, vintage, tropical, industrial, boho, clásico, playero, campestre, urbano, artístico, romántico</strong> o cualquier estilo personalizado que desees.
                         </p>
                     </div>
                 </div>

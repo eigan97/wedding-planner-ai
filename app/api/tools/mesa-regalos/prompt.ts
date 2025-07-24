@@ -41,7 +41,7 @@ Si el usuario especifica un estilo que no está en la lista, debes interpretar e
 - Iconos emoji para categorías
 - Enlaces de pago seguros
 - Animaciones suaves en hover
-- Colores románticos y elegantes
+- Colores minimalistas y elegantes
 
 **ESTRUCTURA DE REGALOS:**
 Cada regalo debe incluir:

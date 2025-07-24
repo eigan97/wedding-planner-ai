@@ -9,7 +9,7 @@ export const portadaSchema = z.object({
     nombreNovia: z.string().optional().default('María').describe('Nombre de la novia'),
     fechaBoda: z.string().optional().default('15 de diciembre de 2024').describe('Fecha de la boda'),
     fraseEspecial: z.string().optional().default('Un amor eterno comienza aquí').describe('Frase especial para la portada'),
-    estilo: z.string().optional().default('romantico').describe('Estilo visual de la portada (puede ser: romantico, elegante, rustico, moderno, o cualquier estilo personalizado)')
+    estilo: z.string().optional().default('minimalista').describe('Estilo visual de la portada (puede ser: minimalista, elegante, rustico, moderno, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
@@ -19,7 +19,7 @@ export async function executePortada(args: z.infer<typeof portadaSchema>) {
         nombreNovia = 'María',
         fechaBoda = '15 de diciembre de 2024',
         fraseEspecial = 'Un amor eterno comienza aquí',
-        estilo = 'romantico'
+        estilo = 'minimalista'
     } = args;
 
     try {
@@ -54,9 +54,9 @@ Genera el HTML para la sección de portada siguiendo las especificaciones del pr
         console.error('Error en executePortada:', error);
         // HTML de fallback en caso de error
         return `
-        <section class="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-rose-50 to-pink-100 overflow-hidden">
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30" 
-                 style="background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+        <section class="min-h-screen relative flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+                 style="background-image: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
             </div>
             
             <div class="absolute inset-0 bg-black opacity-40"></div>

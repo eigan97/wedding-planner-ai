@@ -36,7 +36,7 @@ export const itinerarioSchema = z.object({
             icono: '💃'
         }
     ]).describe('Array de eventos del día de la boda'),
-    estilo: z.enum(['timeline', 'cards', 'list']).optional().default('timeline').describe('Estilo de presentación del itinerario')
+    estilo: z.string().optional().default('minimalista').describe('Estilo de presentación del itinerario (puede ser: minimalista, timeline, cards, list, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
@@ -68,7 +68,7 @@ export async function executeItinerario(args: z.infer<typeof itinerarioSchema>) 
                 icono: '💃'
             }
         ],
-        estilo = 'timeline'
+        estilo = 'minimalista'
     } = args;
 
     try {

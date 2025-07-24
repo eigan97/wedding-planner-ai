@@ -9,7 +9,7 @@ export const rsvpSchema = z.object({
     subtitulo: z.string().optional().default('Nos encantaría que nos acompañes en nuestro día especial').describe('Subtítulo de la sección'),
     opcionesMenu: z.array(z.string()).optional().default(['Vegetariano', 'Carne', 'Pescado']).describe('Opciones de menú disponibles'),
     maxAcompanantes: z.number().optional().default(5).describe('Número máximo de acompañantes permitidos'),
-    estilo: z.enum(['elegante', 'moderno', 'rustico']).optional().default('elegante').describe('Estilo visual del formulario')
+    estilo: z.string().optional().default('minimalista').describe('Estilo visual del formulario (puede ser: minimalista, elegante, moderno, rustico, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
@@ -19,7 +19,7 @@ export async function executeRSVP(args: z.infer<typeof rsvpSchema>) {
         subtitulo = 'Nos encantaría que nos acompañes en nuestro día especial',
         opcionesMenu = ['Vegetariano', 'Carne', 'Pescado'],
         maxAcompanantes = 5,
-        estilo = 'elegante'
+        estilo = 'minimalista'
     } = args;
 
     try {

@@ -9,7 +9,7 @@ Este proyecto implementa un sistema modular de agentes especializados para crear
 1. **🏠 Portada** (`portada`)
    - Genera la sección principal con nombres de los novios
    - Incluye fecha de la boda y diseño elegante
-   - Múltiples estilos: romántico, elegante, rústico, moderno
+   - Múltiples estilos: minimalista, elegante, rústico, moderno
 
 2. **💌 Nuestra Historia** (`nuestra_historia`)
    - Crea timeline de momentos importantes

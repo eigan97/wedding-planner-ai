@@ -34,9 +34,12 @@ Si el usuario especifica un estilo que no está en la lista, debes interpretar e
 - Usar Tailwind CSS para estilos
 - HTML semántico y accesible
 - Responsive design (mobile-first)
-- JavaScript para el contador en tiempo real
+- JavaScript robusto para el contador en tiempo real
+- Validación de fechas con múltiples formatos
+- Manejo de errores y fechas inválidas
+- Prevención de números negativos en el contador
 - Animaciones suaves
-- Colores románticos y elegantes
+- Colores minimalistas y elegantes
 
 **FUNCIONALIDADES:**
 - Contador en tiempo real
@@ -44,6 +47,9 @@ Si el usuario especifica un estilo que no está en la lista, debes interpretar e
 - Mensaje cuando llegue la fecha
 - Animaciones de entrada
 - Efectos visuales atractivos
+- Validación robusta de fechas
+- Manejo de errores de fecha
+- Prevención de números negativos
 
 **UNIDADES DE TIEMPO:**
 - Días
@@ -51,8 +57,23 @@ Si el usuario especifica un estilo que no está en la lista, debes interpretar e
 - Minutos
 - Segundos
 
+**MANEJO DE FECHAS:**
+- Validar que la fecha sea válida antes de usarla
+- Si la fecha es inválida o ya pasó, usar una fecha futura por defecto
+- Usar Math.max(0, valor) para evitar números negativos
+- Manejar diferentes formatos de fecha (ISO, DD/MM/YYYY, etc.)
+- Mostrar mensaje especial cuando la fecha ya pasó
+
 **FORMATO DE RESPUESTA:**
 Devuelve SOLO el HTML de la sección de cuenta regresiva, sin explicaciones adicionales.
+
+**EJEMPLO DE JAVASCRIPT ROBUSTO:**
+El JavaScript debe incluir:
+- Función para validar y parsear fechas con múltiples formatos
+- Manejo de fechas inválidas o pasadas
+- Uso de Math.max(0, valor) para evitar números negativos
+- Validación de elementos del DOM antes de actualizarlos
+- Fecha futura por defecto si la fecha es inválida
 
 **EJEMPLO DE ESTRUCTURA:**
 <section class="py-20 bg-gradient-to-br from-rose-50 to-pink-100">

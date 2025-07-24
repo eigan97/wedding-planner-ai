@@ -27,7 +27,7 @@ export const footerSchema = z.object({
         direccion: 'Ciudad de México, México'
     }).describe('Información de contacto'),
     mensaje: z.string().optional().default('Gracias por ser parte de nuestro día especial').describe('Mensaje de agradecimiento'),
-    estilo: z.enum(['elegant', 'minimal', 'romantic', 'modern']).optional().default('elegant').describe('Estilo visual del footer')
+    estilo: z.string().optional().default('minimalista').describe('Estilo visual del footer (puede ser: minimalista, elegant, minimal, romantic, modern, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
@@ -47,7 +47,7 @@ export async function executeFooter(args: z.infer<typeof footerSchema>) {
             direccion: 'Ciudad de México, México'
         },
         mensaje = 'Gracias por ser parte de nuestro día especial',
-        estilo = 'elegant'
+        estilo = 'minimalista'
     } = args;
 
     try {

@@ -34,7 +34,7 @@ export const galeriaSchema = z.object({
             alt: 'Foto de celebración'
         }
     ]).describe('Array de fotos para la galería'),
-    estilo: z.string().optional().default('grid').describe('Estilo de presentación de la galería (puede ser: masonry, grid, carousel, gallery, o cualquier estilo personalizado)'),
+    estilo: z.string().optional().default('minimalista').describe('Estilo de presentación de la galería (puede ser: minimalista, masonry, grid, carousel, gallery, o cualquier estilo personalizado)'),
     mostrarCategorias: z.boolean().optional().default(true).describe('Mostrar filtros por categorías')
 });
 
@@ -64,7 +64,7 @@ export async function executeGaleria(args: z.infer<typeof galeriaSchema>) {
                 alt: 'Foto de celebración'
             }
         ],
-        estilo = 'grid',
+        estilo = 'minimalista',
         mostrarCategorias = true
     } = args;
 

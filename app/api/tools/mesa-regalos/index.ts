@@ -34,7 +34,7 @@ export const mesaRegalosSchema = z.object({
         }
     ]).describe('Array de regalos disponibles'),
     mensaje: z.string().optional().default('Tu presencia es nuestro mejor regalo, pero si deseas hacernos un obsequio, aquí tienes algunas opciones que nos encantarían').describe('Mensaje sobre los regalos'),
-    estilo: z.enum(['cards', 'list', 'grid']).optional().default('cards').describe('Estilo de presentación de los regalos')
+    estilo: z.string().optional().default('minimalista').describe('Estilo de presentación de los regalos (puede ser: minimalista, cards, list, grid, o cualquier estilo personalizado)')
 });
 
 // Función de ejecución
@@ -61,7 +61,7 @@ export async function executeMesaRegalos(args: z.infer<typeof mesaRegalosSchema>
             }
         ],
         mensaje = 'Tu presencia es nuestro mejor regalo, pero si deseas hacernos un obsequio, aquí tienes algunas opciones que nos encantarían',
-        estilo = 'cards'
+        estilo = 'minimalista'
     } = args;
 
     try {
